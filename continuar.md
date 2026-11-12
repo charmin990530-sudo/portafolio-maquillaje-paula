@@ -264,3 +264,6 @@ Solo intentar navegador si cambió la disponibilidad del entorno; no repetir int
 - Explorar en movil muestra la intro de la galeria; el foco va al panel. La pagina de Paula abre arriba y restaura el scroll al volver.
 - Etiqueta de cierre oculta durante la galeria; ajustes de tablet y estudio.
 - `vercel.json` con cabeceras de seguridad. Verificado en 320/360/390/414/640/768/1024/1440.
+
+- Repo publico: https://github.com/charmin990530-sudo/portafolio-maquillaje-paula
+- Produccion: https://portafolio-maquillaje-paula.vercel.app

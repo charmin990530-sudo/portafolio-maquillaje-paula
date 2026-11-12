@@ -88,3 +88,5 @@ Cierre de la continuación del proyecto:
 - La etiqueta fija "MAQUILLAJE / JERS BEAUTY LAB" se oculta durante la galeria y reaparece en el cierre.
 - Ajustes de tablet: separacion del nav a 640/768 px y cabecera del estudio en una columna hasta 767 px, con titulo escalado.
 - Se agrego `vercel.json` con cabeceras de seguridad para el despliegue y se verifico el responsive en 320, 360, 390, 414, 640, 768, 1024 y 1440 px sin desbordes.
+
+- Repositorio publico y despliegue en Vercel: https://github.com/charmin990530-sudo/portafolio-maquillaje-paula y https://portafolio-maquillaje-paula.vercel.app

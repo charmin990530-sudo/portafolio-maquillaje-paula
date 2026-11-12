@@ -2,6 +2,8 @@
 
 Portafolio de maquillaje con avatar multivista interactivo, galería de trabajos y cotización directa por WhatsApp. React 19, TypeScript, Vite 6, Motion y Tailwind.
 
+Sitio en producción: [portafolio-maquillaje-paula.vercel.app](https://portafolio-maquillaje-paula.vercel.app)
+
 ## Desarrollo
 
 ```bash
