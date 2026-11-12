@@ -1,0 +1,53 @@
+.hero-scene {
+  position: fixed; inset: 0; z-index: 0; overflow: hidden;
+  min-height: 320px; background: #160d19; color: #fff; pointer-events: none;
+}
+.hero-scene__ambient { position: absolute; inset: 0; background: radial-gradient(ellipse at 64% 46%, #743060 0, #3b1c3d 29%, #160d19 67%); }
+.hero-scene__ambient::after { content: ''; position: absolute; width: min(66vw, 780px); aspect-ratio: 1; border: 1px solid #ffffff12; border-radius: 50%; top: 46%; left: 60%; transform: translate(-50%, -50%); }
+.hero-scene__index { position: absolute; right: 32px; top: 124px; font-size: 9px; letter-spacing: .16em; color: #d5b4ce; }
+.avatar-viewer { position: absolute; left: 58%; bottom: -1px; transform: translateX(-50%); width: min(108svh, 85vw); aspect-ratio: 1; }
+.avatar-viewer__canvas, .avatar-viewer__fallback { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.avatar-viewer__canvas { opacity: 0; }
+.avatar-viewer[data-ready="true"] .avatar-viewer__canvas { opacity: 1; }
+.avatar-viewer[data-ready="true"] .avatar-viewer__fallback { visibility: hidden; }
+.hero-copy { position: absolute; top: 35%; left: 32px; width: min(35vw, 460px); }
+.eyebrow { font-size: 10px; letter-spacing: .18em; text-transform: uppercase; line-height: 1.5; }
+.hero-copy > .eyebrow { margin: 0 0 24px; color: #d1b1c8; }
+.hero-copy h1 { margin: 0; font-size: clamp(54px, 6.1vw, 96px); line-height: .96; letter-spacing: -.065em; font-weight: 500; }
+.hero-copy h1 em, .gallery-intro h2 em, .dialog-copy h3 em { font-family: Georgia, 'Times New Roman', serif; font-weight: 400; letter-spacing: -.065em; }
+.hero-copy__description { max-width: 285px; font-size: 13px; line-height: 1.6; color: #d1c5cf; margin: 28px 0 0; }
+.hero-explore { pointer-events: auto; display: flex; align-items: center; gap: 42px; padding: 16px 0; margin-top: 20px; border: 0; border-bottom: 1px solid #ffffff50; background: none; color: #fff; font: inherit; font-size: 12px; cursor: pointer; }
+.hero-explore span { font-size: 20px; }
+.hero-scene__hint { position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); font-size: 9px; letter-spacing: .09em; color: #d7c8d1; white-space: nowrap; }
+.hero-scene--offscreen { visibility: hidden; }
+@media (min-width: 640px) and (max-width: 1023px) {
+  .hero-copy { left: 32px; width: 42vw; top: 30%; }
+  .hero-copy h1 { font-size: clamp(50px, 7.2vw, 74px); }
+  .avatar-viewer { left: 65%; width: min(100svh, 108vw); }
+  .hero-scene__hint { display: none; }
+}
+@media (max-width: 639px) {
+  .hero-scene__index { top: 88px; left: 20px; right: auto; font-size: 8px; }
+  .hero-copy { top: 125px; left: 20px; width: calc(100% - 40px); }
+  .hero-copy > .eyebrow { display: none; }
+  .hero-copy h1 { font-size: clamp(42px, 12.2vw, 62px); line-height: .95; }
+  .hero-copy__description { font-size: 11px; line-height: 1.5; max-width: 280px; margin-top: 16px; }
+  .hero-explore { gap: 30px; margin-top: 8px; padding: 8px 0; font-size: 11px; }
+  .hero-explore span { font-size: 16px; }
+  .avatar-viewer { width: min(87svh, 145vw); left: 55%; bottom: -3px; }
+  .hero-scene__hint { display: none; }
+}
+@media (max-height: 650px) and (min-width: 640px) {
+  .hero-copy { top: 27%; }
+  .hero-copy h1 { font-size: 54px; }
+  .hero-copy__description { margin-top: 16px; font-size: 12px; }
+  .hero-copy > .eyebrow { margin-bottom: 15px; }
+  .hero-scene__index { display: none; }
+}
+@media (max-height: 720px) and (max-width: 639px) {
+  .hero-copy { top: 108px; }
+  .hero-copy h1 { font-size: 42px; }
+  .hero-copy__description { margin-top: 10px; max-width: 240px; }
+  .hero-scene__index { top: 76px; }
+  .avatar-viewer { width: 110vw; left: 60%; }
+}

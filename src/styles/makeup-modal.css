@@ -1,0 +1,32 @@
+.dialog { width: min(680px, calc(100% - 32px)); max-height: calc(100dvh - 48px); margin: auto; padding: 0; border: 1px solid #ffffff22; border-radius: 4px; background: #1c1420; color: #f9f2f7; cursor: auto; box-shadow: 0 24px 120px #0008; }
+.dialog::backdrop { background: #100b14d9; backdrop-filter: blur(12px); }
+.dialog__heading { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 24px 28px; border-bottom: 1px solid #ffffff15; }
+.dialog__heading h2 { font-size: 14px; font-weight: 500; margin: 0; letter-spacing: -.02em; }
+.dialog__close { border: 1px solid #ffffff35; border-radius: 50%; width: 44px; height: 44px; background: transparent; color: inherit; font: inherit; font-size: 26px; line-height: 1; cursor: pointer; flex-shrink: 0; }
+.dialog-copy { padding: 32px; }
+.dialog-copy > p { color: #d3c6d0; font-size: 14px; line-height: 1.7; }
+.dialog-copy h3 { font-size: clamp(36px, 7vw, 60px); letter-spacing: -.05em; font-weight: 500; line-height: 1.05; margin: 16px 0 28px; }
+.pill-button { display: inline-flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 48px; border: 0; border-radius: 40px; padding: 14px 24px; color: #211124; background: #f0c6e5; font: inherit; font-size: 12px; text-decoration: none; cursor: pointer; }
+.pill-button:hover { background: #fff; }
+.lightbox-dialog { width: fit-content; max-width: calc(100% - 32px); }
+.lightbox-dialog__image { display: block; width: auto; max-width: min(920px, calc(100vw - 32px)); max-height: calc(100dvh - 170px); margin: 0 auto; background: #0b080d; }
+.quote-form { display: grid; gap: 20px; margin-top: 24px; }
+.quote-form__row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.quote-form__hint { color: #a68f9e; font-size: 10px; letter-spacing: .04em; }
+.quote-form label, .quote-result label { display: grid; gap: 8px; font-size: 12px; color: #edcfe3; }
+.quote-form input, .quote-form select, .quote-form textarea, .quote-result textarea { width: 100%; padding: 14px; border: 1px solid #ffffff30; border-radius: 3px; background: #ffffff05; color: #fff; font: inherit; font-size: 14px; resize: vertical; }
+.quote-form select { appearance: none; padding-right: 40px; background-image: linear-gradient(45deg, transparent 50%, #d9b6cd 50%), linear-gradient(135deg, #d9b6cd 50%, transparent 50%); background-position: calc(100% - 19px) 50%, calc(100% - 14px) 50%; background-size: 5px 5px; background-repeat: no-repeat; cursor: pointer; }
+.quote-form select option { color: #211124; background: #fff; }
+.quote-form input[type="date"] { color-scheme: dark; }
+.quote-form input::placeholder, .quote-form textarea::placeholder { color: #ac98a8; }
+.quote-form .pill-button { gap: 12px; justify-self: start; }
+.quote-form .pill-button svg, .quote-actions .pill-button svg { width: 18px; height: 18px; flex: none; }
+.quote-result { margin-top: 24px; padding-top: 24px; border-top: 1px solid #ffffff25; }
+.quote-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 16px; }
+.form-feedback { min-height: 24px; }
+@media (max-width: 639px) {
+  .quote-form__row { grid-template-columns: 1fr; }
+  .dialog__heading { padding: 16px 20px; }
+  .dialog-copy { padding: 24px; }
+  .lightbox-dialog__image { max-height: 72vh; }
+}

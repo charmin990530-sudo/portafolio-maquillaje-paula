@@ -1,0 +1,20 @@
+.black-panel { outline: none; position: fixed; inset: 0; z-index: 10; overflow: hidden; background: #090909; color: #fff; transform: translateY(100vh); will-change: transform; }
+.gallery-wrap { position: relative; width: 100%; padding-top: max(300px, min(400px, 40vh)); padding-bottom: 80px; will-change: transform; }
+.gallery-intro { position: absolute; top: 92px; left: 32px; }
+.gallery-intro > .eyebrow { color: #b4a0af; margin: 0 0 16px; }
+.gallery-intro h2 { font-weight: 500; font-size: clamp(44px, 5vw, 72px); line-height: .95; letter-spacing: -.055em; margin: 0 0 18px; }
+.gallery-intro > p:last-child { font-size: 11px; line-height: 1.6; color: #a49ba2; }
+.gallery-grid { position: relative; display: grid; gap: 12px; padding: 0 12px; }
+.gallery-cell { min-width: 0; aspect-ratio: 2 / 3; }
+.gallery-card { position: relative; display: block; width: 100%; border: 0; padding: 0; text-align: left; color: #fff; overflow: hidden; background: #181518; transform: scale(0); transform-origin: center bottom; cursor: pointer; }
+.gallery-card img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; user-select: none; -webkit-user-drag: none; }
+.gallery-card__label { position: absolute; inset: auto 0 0; display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; padding: 48px 16px 16px; background: linear-gradient(transparent, #000b); font-size: 12px; line-height: 1.2; opacity: 0; transition: opacity .2s; }
+.gallery-card:hover .gallery-card__label, .gallery-card:focus-visible .gallery-card__label { opacity: 1; }
+.bp-card { will-change: transform; }
+@media (min-width: 640px) { .gallery-grid { gap: 16px; padding: 0 16px; } }
+@media (hover: none) { .gallery-card__label { opacity: 1; font-size: 10px; padding: 48px 12px 12px; } }
+@media (max-width: 639px) { .gallery-intro { left: 20px; top: 80px; } .gallery-intro h2 { font-size: 48px; } }
+@media (prefers-reduced-motion: reduce) { .bp-card { will-change: auto; } .gallery-card__label { transition: none; } }
+[data-reduced-motion="true"] .black-panel { position: relative; transform: none; }
+[data-reduced-motion="true"] .gallery-card { transform: none; }
+[data-reduced-motion="true"] .gallery-wrap { transform: none; }
