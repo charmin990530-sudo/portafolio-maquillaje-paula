@@ -10,7 +10,7 @@ export function StudioPage({ onBack }: StudioPageProps) {
           <p className="eyebrow">MAQUILLADORA ENCARGADA</p>
           <h1 className="studio__title">Paula Neira</h1>
           <p className="studio__lede">Estudios, fotografía y trayecto de Paula como maquilladora.</p>
-          <button type="button" className="pill-button" onClick={onBack}>Volver al portafolio</button>
+          <button type="button" className="pill-button" onClick={onBack}>Volver a la selección</button>
         </div>
         <figure className="studio__portrait">
           <img src={portrait} alt="Paula Neira, maquilladora de Jers Beauty Lab" width={1200} height={1600} decoding="async" />

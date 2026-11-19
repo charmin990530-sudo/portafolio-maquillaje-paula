@@ -22,7 +22,7 @@ export function Dialog({ open, title, onClose, children, className = '' }: Dialo
       document.body.style.overflow = previousOverflow
       if (dialog.open) dialog.close()
     }
-  }, [open])
+  }, [open, title])
 
   return (
     <dialog ref={ref} className={`dialog ${className}`} aria-labelledby={titleId}

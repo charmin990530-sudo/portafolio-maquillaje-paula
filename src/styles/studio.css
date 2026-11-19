@@ -46,6 +46,12 @@
   font-weight: 500;
 }
 
+.studio__title em {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-weight: 400;
+  letter-spacing: -0.065em;
+}
+
 .studio__lede {
   margin: 0 0 32px;
   max-width: 420px;
