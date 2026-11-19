@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import atlasUrl from '../../assets/hero/model-turntable.webp'
-import frontUrl from '../../assets/hero/model-front.webp'
+import atlasUrl from '../../assets/hero/sofi-turntable.webp'
+import frontUrl from '../../assets/hero/sofi-front.webp'
 import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion'
 import { createAvatarRenderer } from '../../lib/avatarRenderer'
 import { pointerToYaw, yawToFrame } from '../../lib/avatarMath'
@@ -20,6 +20,8 @@ export function AvatarViewer() {
     let frame = 0
     let previousTime = 0
     let current = 0
+    let touchPointer: number | null = null
+    let lastTouchX = 0
     let renderer: ReturnType<typeof createAvatarRenderer> = null
     let observer: ResizeObserver | null = null
     const visible = () => !document.hidden && window.scrollY < window.innerHeight && !document.querySelector('dialog[open]')
@@ -45,12 +47,37 @@ export function AvatarViewer() {
     }
     wakeRef.current = wake
     const pointer = (event: PointerEvent) => {
-      if (reducedMotion || event.pointerType === 'touch' || !visible()) return
+      if (!visible()) return
+      if (event.pointerType === 'touch') {
+        if (touchPointer !== event.pointerId) return
+        const distance = event.clientX - lastTouchX
+        lastTouchX = event.clientX
+        targetRef.current = Math.max(-1, Math.min(1, targetRef.current + distance / Math.max(200, window.innerWidth * 0.72)))
+        wake()
+        return
+      }
+      if (reducedMotion) return
       if (event.target instanceof Element && event.target.closest('button, a, input, textarea, dialog')) return
       targetRef.current = pointerToYaw(event.clientX, window.innerWidth)
       wake()
     }
     const reset = () => { targetRef.current = 0; wake() }
+    const touchStart = (event: PointerEvent) => {
+      if (event.pointerType !== 'touch' || !visible()) return
+      touchPointer = event.pointerId
+      lastTouchX = event.clientX
+      targetRef.current = pointerToYaw(event.clientX, window.innerWidth)
+      wake()
+    }
+    const touchEnd = (event: PointerEvent) => {
+      if (event.pointerId === touchPointer) touchPointer = null
+    }
+    const touchCancel = (event: PointerEvent) => {
+      if (event.pointerId === touchPointer) {
+        touchPointer = null
+        reset()
+      }
+    }
     const visibility = () => {
       if (!visible()) { cancelAnimationFrame(frame); frame = 0 }
       else wake()
@@ -76,6 +103,9 @@ export function AvatarViewer() {
     document.addEventListener('visibilitychange', visibility)
     canvas.addEventListener('webglcontextlost', lost)
     canvas.addEventListener('webglcontextrestored', restored)
+    canvas.addEventListener('pointerdown', touchStart)
+    window.addEventListener('pointerup', touchEnd)
+    window.addEventListener('pointercancel', touchCancel)
     return () => {
       disposed = true
       cancelAnimationFrame(frame)
@@ -91,6 +121,9 @@ export function AvatarViewer() {
       document.removeEventListener('visibilitychange', visibility)
       canvas.removeEventListener('webglcontextlost', lost)
       canvas.removeEventListener('webglcontextrestored', restored)
+      canvas.removeEventListener('pointerdown', touchStart)
+      window.removeEventListener('pointerup', touchEnd)
+      window.removeEventListener('pointercancel', touchCancel)
     }
   }, [reducedMotion, recovery])
 

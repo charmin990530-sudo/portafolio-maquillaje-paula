@@ -35,6 +35,8 @@
   .hero-explore { gap: 30px; margin-top: 8px; padding: 8px 0; font-size: 11px; }
   .hero-explore span { font-size: 16px; }
   .avatar-viewer { width: min(87svh, 145vw); left: 55%; bottom: -3px; }
+  .avatar-viewer { pointer-events: auto; touch-action: pan-y pinch-zoom; }
+  .avatar-viewer__canvas { pointer-events: auto; touch-action: pan-y pinch-zoom; cursor: grab; }
   .hero-scene__hint { display: none; }
 }
 @media (max-height: 650px) and (min-width: 640px) {

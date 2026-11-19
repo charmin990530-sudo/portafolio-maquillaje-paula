@@ -9,19 +9,19 @@ const images = import.meta.glob(['../../imagenes/*.webp', '!../../imagenes/sofic
 }) as Record<string, string>
 
 const entries: Array<Omit<Product, 'image'>> = [
-  { id: 'base-atenea', name: 'Base Atenea' },
-  { id: 'corrector-atenea', name: 'Corrector Atenea' },
-  { id: 'sombras-atenea', name: 'Sombras Atenea' },
-  { id: 'delineador-en-gel-jdg', name: 'Delineador en gel JDG' },
-  { id: 'lip-gloss', name: 'Lip gloss' },
-  { id: 'labial-mate-lbl', name: 'Labial mate L’Bel' },
-  { id: 'base-matte-lbel', name: 'Base matte L’Bel' },
-  { id: 'shampoo-hidratacion-profunda', name: 'Shampoo hidratación profunda' },
-  { id: 'acondicionador-reparador', name: 'Acondicionador reparador' },
-  { id: 'tratamiento-control-de-frizz', name: 'Tratamiento control de frizz' },
-  { id: 'shampoo-nutritivo', name: 'Shampoo nutritivo' },
-  { id: 'acondicionador-nutricion-intensa', name: 'Acondicionador nutrición intensa' },
-  { id: 'shampoo-anti-caida', name: 'Shampoo anticaída' },
+  { id: 'base-atenea', name: 'Glam rosa nacarado' },
+  { id: 'corrector-atenea', name: 'Maquillaje rosa suave' },
+  { id: 'sombras-atenea', name: 'Glam de ojos luminoso' },
+  { id: 'delineador-en-gel-jdg', name: 'Delineado negro definido' },
+  { id: 'lip-gloss', name: 'Maquillaje natural con brillo' },
+  { id: 'labial-mate-lbl', name: 'Glam violeta y labios brillantes' },
+  { id: 'base-matte-lbel', name: 'Maquillaje natural luminoso' },
+  { id: 'shampoo-hidratacion-profunda', name: 'Delineado y sombra rosada' },
+  { id: 'acondicionador-reparador', name: 'Maquillaje soft glam' },
+  { id: 'tratamiento-control-de-frizz', name: 'Glam rosa con luz violeta' },
+  { id: 'shampoo-nutritivo', name: 'Glam violeta editorial' },
+  { id: 'acondicionador-nutricion-intensa', name: 'Glam rosa con brillo' },
+  { id: 'shampoo-anti-caida', name: 'Maquillaje natural de día' },
 ]
 
 export const products: Product[] = entries.map((product) => {
