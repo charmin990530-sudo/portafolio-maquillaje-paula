@@ -1,89 +1,80 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react'
-import { siteConfig } from '../../config/site'
+import { useState, type FormEvent } from 'react'
+import { looks } from '../../config/catalog'
+import { studioEmail, studioWhatsApp } from '../../config/site'
 import { Dialog } from './Dialog'
 import { WhatsAppIcon } from './WhatsAppIcon'
 
 export type SitePanel = 'quote' | 'privacy' | null
+const occasions = ['Evento social', 'Novia', 'Quinceañera', 'Graduación', 'Sesión de fotos', 'Otra ocasión']
 
-type SiteDialogsProps = { panel: SitePanel; onClose: () => void }
+function QuoteForm({ reference }: { reference: string }) {
+  const [status, setStatus] = useState<'idle' | 'sending' | 'accepted' | 'activation' | 'error'>('idle')
+  const [message, setMessage] = useState('')
+  async function send(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    if (status === 'sending') return
+    const data = new FormData(event.currentTarget)
+    const read = (key: string) => String(data.get(key) ?? '').trim()
+    if (read('_honey')) return
+    const lines = [
+      `Hola, Paula. Soy ${read('name')} y quiero cotizar un maquillaje.`,
+      `Mi correo: ${read('email')}`, `Ocasión: ${read('occasion')}`, `Look: ${read('look')}`,
+      read('date') && `Fecha: ${read('date')}`, read('city') && `Lugar: ${read('city')}`,
+      read('details') && `Detalles: ${read('details')}`,
+    ].filter(Boolean)
+    const text = lines.join('\n')
+    setMessage(text)
+    setStatus('sending')
+    try {
+      const response = await fetch(`https://formsubmit.co/ajax/${studioEmail}`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ name: read('name'), email: read('email'), Consulta: text,
+          _subject: 'Nueva cotización de maquillaje · Jers Beauty Lab', _template: 'table', _honey: '' }),
+        signal: AbortSignal.timeout(18000),
+      })
+      const result = await response.json()
+      if (/activat|confirm your email/i.test(result.message ?? '')) setStatus('activation')
+      else if (response.ok && String(result.success) === 'true') setStatus('accepted')
+      else setStatus('error')
+    } catch { setStatus('error') }
+  }
 
-const occasions = ['Novia', 'Quinceañera', 'Graduación', 'Sesión de fotos', 'Evento social', 'Maquillaje para el día a día', 'Otro']
-const looks = ['Aún no lo sé', 'Soft', 'Natural', 'Glam', 'Novia', 'Editorial']
-
-function whatsappUrl(text: string) {
-  return `https://wa.me/${siteConfig.contact.whatsapp}?text=${encodeURIComponent(text)}`
+  return <div className="dialog-copy">
+    {(status === 'idle' || status === 'sending' || status === 'error') && <>
+      <p>Cuéntame para qué ocasión te maquillas. Recibiré tu consulta por correo y podrás enviármela también por WhatsApp.</p>
+      <form className="quote-form" onSubmit={send} onChange={() => { if (status === 'error') { setStatus('idle'); setMessage('') } }}>
+        <fieldset disabled={status === 'sending'}>
+        <label>Tu nombre<input name="name" required autoComplete="name" maxLength={80} pattern={'.*\\S.*'} /></label>
+        <label>Tu correo<input name="email" type="email" required autoComplete="email" maxLength={254} /></label>
+        <div className="quote-form__row">
+          <label>Ocasión<select name="occasion" required defaultValue=""><option value="" disabled>Elige una ocasión</option>{occasions.map(o => <option key={o}>{o}</option>)}</select></label>
+          <label>Look de referencia<select name="look" defaultValue={reference || 'Por definir'}><option>Por definir</option>{looks.map(l => <option key={l.name}>{l.name}</option>)}</select></label>
+        </div>
+        <div className="quote-form__row">
+          <label>Fecha (opcional)<input type="date" name="date" /></label>
+          <label>Ciudad (opcional)<input name="city" autoComplete="address-level2" maxLength={80} /></label>
+        </div>
+        <label>¿Qué tienes en mente? (opcional)<textarea name="details" rows={3} maxLength={1000} /></label>
+        <input type="text" name="_honey" hidden tabIndex={-1} aria-hidden="true" autoComplete="off" />
+        <button type="submit" className="pill-button" disabled={status === 'sending'}>{status === 'sending' ? 'Enviando…' : status === 'error' ? 'Reintentar por correo' : 'Enviar consulta'}</button>
+        </fieldset>
+      </form>
+    </>}
+    <p className="form-feedback" role="status">
+      {status === 'accepted' && 'Tu consulta fue aceptada para envío por correo. Envíale también una copia a Paula por WhatsApp.'}
+      {status === 'activation' && 'El correo del estudio está pendiente de activación. Envía la consulta por WhatsApp o desde tu correo.'}
+      {status === 'error' && 'No pudimos confirmar el envío por correo. Puedes reintentarlo o enviar tu consulta desde uno de estos enlaces.'}
+    </p>
+    {message && status !== 'sending' && <div className="quote-actions">
+      <a className="pill-button" href={`https://wa.me/${studioWhatsApp}?text=${encodeURIComponent(message)}`} target="_blank" rel="noopener noreferrer"><WhatsAppIcon />Enviar copia por WhatsApp</a>
+      {(status === 'error' || status === 'activation') && <a className="pill-button" href={`mailto:${studioEmail}?subject=Cotización%20de%20maquillaje&body=${encodeURIComponent(message)}`}>Abrir mi correo</a>}
+    </div>}
+  </div>
 }
 
-export function SiteDialogs({ panel, onClose }: SiteDialogsProps) {
-  const [request, setRequest] = useState('')
-  const [feedback, setFeedback] = useState('')
-  const requestRef = useRef<HTMLTextAreaElement>(null)
-  useEffect(() => { setRequest(''); setFeedback('') }, [panel])
-  const title = panel === 'privacy' ? 'Tu privacidad' : 'Hablemos de tu look'
-
-  const prepareRequest = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    const data = new FormData(event.currentTarget)
-    const name = String(data.get('name') ?? '').trim()
-    const occasion = String(data.get('occasion') ?? '').trim()
-    const look = String(data.get('look') ?? '').trim()
-    const date = String(data.get('date') ?? '').trim()
-    const city = String(data.get('city') ?? '').trim()
-    const details = String(data.get('details') ?? '').trim()
-
-    const lines = [
-      `Hola Jers Beauty Lab, soy ${name}.`,
-      '',
-      'Quiero cotizar un maquillaje.',
-      `Ocasión: ${occasion}`,
-      `Tipo de maquillaje: ${look}`,
-    ]
-    if (date) lines.push(`Fecha del evento: ${date}`)
-    if (city) lines.push(`Ciudad o lugar: ${city}`)
-    if (details) lines.push('', 'Detalles e inspiración:', details)
-
-    const text = lines.join('\n')
-    setRequest(text)
-    setFeedback('Abriendo WhatsApp con tu consulta completa…')
-    const opened = window.open(whatsappUrl(text), '_blank', 'noopener,noreferrer')
-    if (!opened) setFeedback('Tu navegador bloqueó la ventana. Copia el mensaje o usa «Abrir WhatsApp».')
-  }
-
-  const copyRequest = async () => {
-    try {
-      await navigator.clipboard.writeText(request)
-      setFeedback('Consulta copiada. Ya puedes enviarla por WhatsApp.')
-    } catch {
-      requestRef.current?.focus()
-      requestRef.current?.select()
-      setFeedback('Seleccionamos tu consulta. Usa la opción Copiar de tu dispositivo.')
-    }
-  }
-
-  return (
-    <Dialog open={panel !== null} title={title} onClose={onClose} className={panel === 'quote' ? 'quote-dialog' : ''}>
-      {panel === 'privacy' && <div className="dialog-copy"><p>La consulta se prepara en tu navegador. Este sitio no la envía ni la guarda en un servidor.</p><p>Solo se comparte cuando tú decides enviarla por WhatsApp. WhatsApp aplica sus propias políticas de privacidad.</p><p>La tipografía puede cargarse desde Google Fonts. Las imágenes de la colección y del avatar se sirven como archivos del propio sitio.</p></div>}
-      {panel === 'quote' && <div className="dialog-copy">
-        <p className="eyebrow">MAQUILLAJE Y BELLEZA</p>
-        <p>Cuéntanos qué tienes en mente. Con estos datos preparamos un mensaje completo para WhatsApp.</p>
-        <form className="quote-form" onSubmit={prepareRequest}>
-          <label htmlFor="quote-name">Tu nombre<input id="quote-name" name="name" autoComplete="name" autoFocus required pattern=".*\S.*" maxLength={80} placeholder="¿Cómo te llamas?" /></label>
-          <div className="quote-form__row">
-            <label htmlFor="quote-occasion">¿Para qué ocasión?<select id="quote-occasion" name="occasion" required defaultValue=""><option value="" disabled>Elige una ocasión</option>{occasions.map((occasion) => <option key={occasion} value={occasion}>{occasion}</option>)}</select></label>
-            <label htmlFor="quote-look">Tipo de maquillaje<select id="quote-look" name="look" required defaultValue=""><option value="" disabled>Elige un estilo</option>{looks.map((look) => <option key={look} value={look}>{look}</option>)}</select></label>
-          </div>
-          <div className="quote-form__row">
-            <label htmlFor="quote-date"><span>Fecha del evento <span className="quote-form__hint">(opcional)</span></span><input id="quote-date" name="date" type="date" min={new Date().toISOString().slice(0, 10)} /></label>
-            <label htmlFor="quote-city"><span>Ciudad o lugar <span className="quote-form__hint">(opcional)</span></span><input id="quote-city" name="city" autoComplete="address-level2" maxLength={80} placeholder="¿Dónde será?" /></label>
-          </div>
-          <label htmlFor="quote-details"><span>Detalles, inspiración o alergias <span className="quote-form__hint">(opcional)</span></span><textarea id="quote-details" name="details" rows={4} maxLength={1200} placeholder="El look que imaginas, referencias, tipo de piel o alergias…" /></label>
-          <button type="submit" className="pill-button quote-form__submit"><WhatsAppIcon /> Enviar por WhatsApp</button>
-        </form>
-        {request && <div className="quote-result"><label htmlFor="quote-request">Tu consulta<textarea id="quote-request" ref={requestRef} value={request} readOnly rows={7} /></label><div className="quote-actions"><button className="pill-button" type="button" onClick={copyRequest}>Copiar mensaje</button>
-          <a className="pill-button" href={whatsappUrl(request)} target="_blank" rel="noopener noreferrer"><WhatsAppIcon /> Abrir WhatsApp ↗</a>
-        </div></div>}
-        <p className="form-feedback" role="status">{feedback}</p>
-      </div>}
-    </Dialog>
-  )
+export function SiteDialogs({ panel, reference, onClose }: { panel: SitePanel; reference: string; onClose: () => void }) {
+  return <Dialog open={panel !== null} title={panel === 'privacy' ? 'Tu privacidad' : 'Cotiza tu maquillaje'} onClose={onClose}>
+    {panel === 'quote' && <QuoteForm reference={reference} />}
+    {panel === 'privacy' && <div className="dialog-copy"><p>Paula usa los datos de tu consulta para responderte y preparar una cotización. Al enviar el formulario, FormSubmit procesa los datos para entregarlos al correo del estudio y conserva una copia hasta 30 días.</p><p>Si eliges WhatsApp, podrás revisar y enviar el mensaje desde tu cuenta. Para consultas sobre tus datos, escribe a <a href={`mailto:${studioEmail}`}>{studioEmail}</a>.</p></div>}
+  </Dialog>
 }
